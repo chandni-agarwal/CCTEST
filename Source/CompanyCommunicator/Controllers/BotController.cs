@@ -11,7 +11,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.Integration.AspNet.Core;
     using Microsoft.Teams.Apps.CompanyCommunicator.Bot;
-    using Microsoft.Teams.Apps.CompanyCommunicator.Common.Adapter;
 
     /// <summary>
     /// Message controller for the bot.
@@ -20,7 +19,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     [ApiController]
     public class BotController : ControllerBase
     {
-        private readonly CompanyCommunicatorBotAdapter adapter;
+        private readonly BotFrameworkHttpAdapter adapter;
         private readonly IBot authorBot;
         private readonly IBot userBot;
 

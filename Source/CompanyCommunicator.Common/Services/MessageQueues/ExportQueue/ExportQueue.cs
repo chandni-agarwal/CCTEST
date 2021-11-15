@@ -5,7 +5,7 @@
 
 namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MessageQueues.ExportQueue
 {
-    using global::Azure.Messaging.ServiceBus;
+    using Microsoft.Extensions.Options;
 
     /// <summary>
     /// The message queue service connected to the "company-communicator-export" queue in Azure service bus.
@@ -20,10 +20,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MessageQueues
         /// <summary>
         /// Initializes a new instance of the <see cref="ExportQueue"/> class.
         /// </summary>
-        /// <param name="serviceBusClient">The service bus client.</param>
-        public ExportQueue(ServiceBusClient serviceBusClient)
+        /// <param name="messageQueueOptions">The message queue options.</param>
+        public ExportQueue(IOptions<MessageQueueOptions> messageQueueOptions)
             : base(
-                  serviceBusClient: serviceBusClient,
+                  serviceBusConnectionString: messageQueueOptions.Value.ServiceBusConnection,
                   queueName: ExportQueue.QueueName)
         {
         }

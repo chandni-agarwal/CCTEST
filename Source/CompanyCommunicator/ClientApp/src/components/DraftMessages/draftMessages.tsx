@@ -9,7 +9,7 @@ import { Loader, List, Flex, Text } from '@fluentui/react-northstar';
 import * as microsoftTeams from "@microsoft/teams-js";
 
 import './draftMessages.scss';
-import { selectMessage, getDraftMessagesList, getMessagesList } from '../../actions';
+import { selectMessage, getDraftMessagesList, getScheduledMessagesList, getMessagesList } from '../../actions';
 import { getBaseUrl } from '../../configVariables';
 import Overflow from '../OverFlow/draftMessageOverflow';
 import { TFunction } from "i18next";
@@ -39,6 +39,7 @@ export interface IMessageProps extends WithTranslation {
     selectedMessage: any;
     selectMessage?: any;
     getDraftMessagesList?: any;
+    getScheduledMessagesList?: any;
     getMessagesList?: any;
 }
 
@@ -170,6 +171,7 @@ class DraftMessages extends React.Component<IMessageProps, IMessageState> {
 
             let submitHandler = (err: any, result: any) => {
                 this.props.getDraftMessagesList().then(() => {
+                    this.props.getScheduledMessagesList();
                     this.props.getMessagesList();
                     this.isOpenTaskModuleAllowed = true;
                 });
@@ -185,4 +187,4 @@ const mapStateToProps = (state: any) => {
 }
 
 const draftMessagesWithTranslation = withTranslation()(DraftMessages);
-export default connect(mapStateToProps, { selectMessage, getDraftMessagesList, getMessagesList })(draftMessagesWithTranslation);
+export default connect(mapStateToProps, { selectMessage, getDraftMessagesList, getScheduledMessagesList, getMessagesList })(draftMessagesWithTranslation);

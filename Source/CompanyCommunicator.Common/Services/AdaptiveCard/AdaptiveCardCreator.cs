@@ -6,6 +6,8 @@
 namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
 {
     using System;
+    using System.Collections.Generic; // new code
+    using System.Text.Json; // new code
     using AdaptiveCards;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.NotificationData;
 
@@ -27,7 +29,9 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
                 notificationDataEntity.Summary,
                 notificationDataEntity.Author,
                 notificationDataEntity.ButtonTitle,
-                notificationDataEntity.ButtonLink);
+                notificationDataEntity.ButtonLink,
+                notificationDataEntity.Buttons, // new code
+                notificationDataEntity.TrackingUrl); // new code
         }
 
         /// <summary>
@@ -39,6 +43,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
         /// <param name="author">The adaptive card's author value.</param>
         /// <param name="buttonTitle">The adaptive card's button title value.</param>
         /// <param name="buttonUrl">The adaptive card's button url value.</param>
+        /// <param name="buttons">The adaptive card's collection of buttons.</param>
+        /// <param name="trackingurl">The adaptive card read tracking url.</param>
         /// <returns>The created adaptive card instance.</returns>
         public AdaptiveCard CreateAdaptiveCard(
             string title,
@@ -46,7 +52,9 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
             string summary,
             string author,
             string buttonTitle,
-            string buttonUrl)
+            string buttonUrl,
+            string buttons,
+            string trackingurl)
         {
             var version = new AdaptiveSchemaVersion(1, 0);
             AdaptiveCard card = new AdaptiveCard(version);
@@ -91,12 +99,39 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.AdaptiveCard
             }
 
             if (!string.IsNullOrWhiteSpace(buttonTitle)
-                && !string.IsNullOrWhiteSpace(buttonUrl))
+                && !string.IsNullOrWhiteSpace(buttonUrl)
+                && string.IsNullOrWhiteSpace(buttons))
             {
                 card.Actions.Add(new AdaptiveOpenUrlAction()
                 {
                     Title = buttonTitle,
                     Url = new Uri(buttonUrl, UriKind.RelativeOrAbsolute),
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(buttons)) // new code (if statement)
+            {
+                // enables case insensitive deserialization for card buttons
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+
+                // add the buttons string to the buttons collection for the card
+                card.Actions.AddRange(JsonSerializer.Deserialize<List<AdaptiveOpenUrlAction>>(buttons, options));
+            }
+
+            if (!string.IsNullOrWhiteSpace(trackingurl))
+            {
+                string trul = trackingurl + "/?id=[ID]&key=[KEY]";
+
+                card.Body.Add(new AdaptiveImage()
+                {
+                    Url = new Uri(trul, UriKind.RelativeOrAbsolute),
+                    Spacing = AdaptiveSpacing.Small,
+                    Size = AdaptiveImageSize.Small,
+                    IsVisible = false,
+                    AltText = string.Empty,
                 });
             }
 

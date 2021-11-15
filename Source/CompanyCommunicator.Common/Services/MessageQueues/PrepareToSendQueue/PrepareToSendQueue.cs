@@ -5,7 +5,7 @@
 
 namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MessageQueues.PrepareToSendQueue
 {
-    using global::Azure.Messaging.ServiceBus;
+    using Microsoft.Extensions.Options;
 
     /// <summary>
     /// The message queue service connected to the "company-communicator-prep" queue in Azure service bus.
@@ -20,10 +20,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MessageQueues
         /// <summary>
         /// Initializes a new instance of the <see cref="PrepareToSendQueue"/> class.
         /// </summary>
-        /// <param name="serviceBusClient">The service bus client.</param>
-        public PrepareToSendQueue(ServiceBusClient serviceBusClient)
+        /// <param name="messageQueueOptions">The message queue options.</param>
+        public PrepareToSendQueue(IOptions<MessageQueueOptions> messageQueueOptions)
             : base(
-                  serviceBusClient: serviceBusClient,
+                  serviceBusConnectionString: messageQueueOptions.Value.ServiceBusConnection,
                   queueName: PrepareToSendQueue.QueueName)
         {
         }
