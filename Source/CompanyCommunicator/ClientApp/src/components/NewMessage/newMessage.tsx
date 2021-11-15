@@ -9,7 +9,6 @@ import { Button, Loader, Dropdown, Text, Flex, Input, TextArea, RadioGroup, Chec
 import { TrashCanIcon, AddIcon, FilesUploadIcon } from '@fluentui/react-icons-northstar'
 import * as microsoftTeams from "@microsoft/teams-js";
 import Resizer from 'react-image-file-resizer';
-import Papa from "papaparse";
 import './newMessage.scss';
 import './teamTheme.scss';
 import { getDraftNotification, getTeams, createDraftNotification, updateDraftNotification, searchGroups, getGroups, verifyGroupAccess } from '../../apis/messageListApi';
@@ -17,12 +16,14 @@ import { getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary, se
 import { getBaseUrl } from '../../configVariables';
 import { ImageUtil } from '../../utility/imageutility';
 import { TFunction } from "i18next";
-import ReactMarkdown from 'react-markdown'; //added 
-import  ReactMarkdownOptions  from 'react-markdown'; //added
-import MarkdownIt from 'markdown-it';  //added
-import MdEditor from 'react-markdown-editor-lite' //added
-import 'react-markdown-editor-lite/lib/index.css'; //added
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';  //added
+import ReactMarkdown from 'react-markdown';
+import  ReactMarkdownOptions  from 'react-markdown';
+import MarkdownIt from 'markdown-it'; 
+import MdEditor from 'react-markdown-editor-lite'
+import 'react-markdown-editor-lite/lib/index.css';
+import { initializeIcons } from 'office-ui-fabric-react/lib/Icons'; 
+
+
 
 
 //hours to be chosen when scheduling messages
@@ -58,7 +59,6 @@ export interface IDraftMessage {
     teams: any[],
     rosters: any[],
     groups: any[],
-    csvusers: string,
     allUsers: boolean,
     isImportant: boolean, // indicates if the message is important
     isScheduled: boolean, // indicates if the message is scheduled
@@ -74,16 +74,13 @@ export interface formState {
     btnTitle?: string,
     author: string,
     card?: any,
-    markdown: string, //added
+    markdown: string,
+  
     page: string,
     teamsOptionSelected: boolean,
     rostersOptionSelected: boolean,
     allUsersOptionSelected: boolean,
     groupsOptionSelected: boolean,
-    csvOptionSelected: boolean,
-    csvLoaded: string,
-    csvError: boolean,
-    csvusers: string,
     teams?: any[],
     groups?: any[],
     exists?: boolean,
@@ -114,14 +111,13 @@ export interface formState {
 
 export interface INewMessageProps extends RouteComponentProps, WithTranslation {
     getDraftMessagesList?: any;
-    source?: string; //added 
+    source?: string;
 }
 
 class NewMessage extends React.Component<INewMessageProps, formState> {
     readonly localize: TFunction;
     private card: any;
     fileInput: any;
-    CSVfileInput: any;
 
     constructor(props: INewMessageProps) {
         super(props);
@@ -142,10 +138,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             rostersOptionSelected: false,
             allUsersOptionSelected: false,
             groupsOptionSelected: false,
-            csvOptionSelected: false,
-            csvLoaded: "",
-            csvError: false,
-            csvusers: "",
             messageId: "",
             loader: true,
             groupAccess: false,
@@ -157,7 +149,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             selectedGroupsNum: 0,
             selectedRadioBtn: "teams",
             selectedTeams: [],
-            markdown: "", //added 
+            markdown: "",
             selectedRosters: [],
             selectedGroups: [],
             errorImageUrlMessage: "",
@@ -172,9 +164,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             values: [] //by default there are no buttons on the adaptive card
         }
         this.fileInput = React.createRef();
-        this.CSVfileInput = React.createRef();
         this.handleImageSelection = this.handleImageSelection.bind(this);
-        this.handleCSVSelection = this.handleCSVSelection.bind(this);
     }
 
     public async componentDidMount() {
@@ -194,7 +184,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                         messageId: id,
                         selectedTeams: selectedTeams,
                         selectedRosters: selectedRosters,
-                        csvusers: this.state.csvusers,
                         selectedSchedule: this.state.selectedSchedule,
                         selectedImportant: this.state.selectedImportant,
                         scheduledDate: this.state.scheduledDate,
@@ -234,10 +223,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         const file = this.fileInput.current.files[0];
         if (file) { //if we have a file
             //resize the image to fit in the adaptivecard
-            var cardsize = JSON.stringify(this.card).length;
             Resizer.imageFileResizer(file, 400, 400, 'JPEG', 80, 0,
                 uri => {
-                    if (uri.toString().length < 32768) { //added 
+                    if (uri.toString().length < 32768) {
                         //everything is ok with the image, lets set it on the card and update
                         setCardImageLink(this.card, uri.toString());
                         this.updateCard();
@@ -247,7 +235,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                         }
                         );
                     } else {
-                        //var errormsg = this.localize("ErrorImageTooBig") + " " + this.localize("ErrorImageTooBigSize") + " " + (32768 - cardsize) + " bytes.";
                         //images bigger than 32K cannot be saved, set the error message to be presented
                         this.setState({
                             errorImageUrlMessage: this.localize("ErrorImageTooBig")
@@ -256,36 +243,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
                 },
                 'base64'); //we need the image in base64
-        }
-    }
-
-    //Function to handle the CSV File selection
-    private handleCSVSelection() {
-        //get the first file selected
-        const file = this.CSVfileInput.current.files[0];
-        //if we have a file
-        if (file) {
-            //parses the CSV file using papa parse library
-            Papa.parse(file, {
-                complete: ({ errors, data }) => {
-                    if (errors.length > 0) {
-                        //file is invalid, show the message for the user
-                        this.setState({
-                            csvLoaded: this.localize("CSVInvalid"),
-                            csvError: true,
-                            csvusers: ""
-                        });
-                    } else {
-                        //file loaded
-                        this.setState({
-                            csvLoaded: this.localize("CSVLoaded"),
-                            csvError: false,
-                            csvusers: JSON.stringify(data)
-                        });
-                    }
-                }
-            });
-
         }
     }
 
@@ -298,18 +255,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         });
         //fire the fileinput click event and run the handleimageselection function
         this.fileInput.current.click();
-    };
-
-    //Function calling a click event on a hidden file input
-    private handleCSVUploadClick = (event: any) => {
-        this.setState({
-            csvLoaded: "",
-            csvError: true,
-            csvusers: ""
-        });
-
-        //fire the fileinput click event and run the handle the CSV function
-        this.CSVfileInput.current.click();
     };
 
     private makeDropdownItems = (items: any[] | undefined) => {
@@ -416,12 +361,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
     private getItem = async (id: number) => {
         try {
-
             const response = await getDraftNotification(id);
             const draftMessageDetail = response.data;
-            //temp message to update the csvLoaded
-            let csvMsg = "";
-
             let selectedRadioButton = "teams";
             if (draftMessageDetail.rosters.length > 0) {
                 selectedRadioButton = "rosters";
@@ -429,15 +370,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (draftMessageDetail.groups.length > 0) {
                 selectedRadioButton = "groups";
             }
-            else if (draftMessageDetail.csvUsers.length > 0) { //we have a message sending to CSV users
-                selectedRadioButton = "csv"; //select the csv option radio
-                csvMsg = this.localize("CSVLoaded"); //update the message that will update the state
-            }
             else if (draftMessageDetail.allUsers) {
                 selectedRadioButton = "allUsers";
             }
-
-            
 
             // set state based on values returned 
             this.setState({
@@ -454,10 +389,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 selectedSchedule: draftMessageDetail.isScheduled,
                 selectedImportant: draftMessageDetail.isImportant,
                 scheduledDate: draftMessageDetail.scheduledDate,
-                csvusers: draftMessageDetail.csvUsers, //update the state with the list of users (JSON)
-                csvLoaded: csvMsg, //updates the message that will be presented in the text field
-                csvError: !(csvMsg.length > 0), //state that stores the csv syntax analysis status
-                csvOptionSelected: (csvMsg.length > 0), //to show the fields and allow updates
             });
 
             // set card properties
@@ -515,11 +446,11 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             markdown: event.target.markdown
         });
     }
-
     public componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
     }
 
+   
     public render(): JSX.Element {
         //I added this feature
         // Initialize a markdown parser
@@ -552,6 +483,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             autoComplete="off"
                                             fluid
                                         />
+
+
                                         <div>
                                             <TextArea
                                                 value={markdown}
@@ -561,6 +494,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             <ReactMarkdown children={this.state.markdown
                                             } className="markdown__preview" />
                                         </div>
+
                                         <Flex gap="gap.smaller" vAlign="end" className="inputField">
                                             <Input
                                                 value={this.state.imageLink}
@@ -594,6 +528,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                 onChange={this.onSummaryChanged}
                                                 fluid />
                                         </div>
+         
 
                                         <Input className="inputField"
                                             value={this.state.author}
@@ -746,43 +681,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                                         <Text error content={this.localize("SendToGroupsNote")} />
                                                                     </div>
                                                                 </div>
-                                                            </Flex>
-                                                        )
-                                                    },
-                                                },
-                                                {
-                                                    name: "csv",
-                                                    key: "csv",
-                                                    value: "csv",
-                                                    label: this.localize("SendToCSV"),
-                                                    children: (Component, { name, ...props }) => {
-                                                        return (
-                                                            <Flex key={name} column debug={false}>
-                                                                <Component {...props} />
-                                                                <Flex gap="gap.smaller" debug={false} vAlign="end" className="csvUpload" hidden={!this.state.csvOptionSelected}>
-                                                                    <Input
-                                                                        value={this.state.csvLoaded}
-                                                                        //value="TESTE"
-                                                                        //label={this.localize("ImageURL")}
-                                                                        //placeholder={this.localize("ImageURLPlaceHolder")}
-                                                                        //onChange={this.onImageLinkChanged}
-                                                                        error={this.state.csvError}
-                                                                        autoComplete="off"
-                                                                        disabled={true}
-                                                                        fluid
-                                                                    />
-                                                                    <input type="file" accept="csv/"
-                                                                        style={{ display: 'none' }}
-                                                                        onChange={this.handleCSVSelection}
-                                                                        ref={this.CSVfileInput} />
-                                                                    <Flex.Item push>
-                                                                        <Button circular onClick={this.handleCSVUploadClick}
-                                                                            size="small"
-                                                                            icon={<FilesUploadIcon />}
-                                                                            title={this.localize("LabelCSV")}
-                                                                        />
-                                                                    </Flex.Item>
-                                                                 </Flex>
                                                             </Flex>
                                                         )
                                                     },
@@ -973,7 +871,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             teamsOptionSelected: data.value === 'teams',
             rostersOptionSelected: data.value === 'rosters',
             groupsOptionSelected: data.value === 'groups',
-            csvOptionSelected: data.value === 'csv',
             allUsersOptionSelected: data.value === 'allUsers',
             selectedTeams: data.value === 'teams' ? this.state.selectedTeams : [],
             selectedTeamsNum: data.value === 'teams' ? this.state.selectedTeamsNum : 0,
@@ -988,9 +885,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         const teamsSelectionIsValid = (this.state.teamsOptionSelected && (this.state.selectedTeamsNum !== 0)) || (!this.state.teamsOptionSelected);
         const rostersSelectionIsValid = (this.state.rostersOptionSelected && (this.state.selectedRostersNum !== 0)) || (!this.state.rostersOptionSelected);
         const groupsSelectionIsValid = (this.state.groupsOptionSelected && (this.state.selectedGroupsNum !== 0)) || (!this.state.groupsOptionSelected);
-        const csvSelectionIsValid = (!(this.state.csvError) && (!(this.state.csvLoaded === "") && this.state.csvOptionSelected)) || (!this.state.csvOptionSelected);
-        const nothingSelected = (!this.state.teamsOptionSelected) && (!this.state.rostersOptionSelected) && (!this.state.groupsOptionSelected) && (!this.state.allUsersOptionSelected) && (!this.state.csvOptionSelected);
-        return (!teamsSelectionIsValid || !rostersSelectionIsValid || !groupsSelectionIsValid || nothingSelected || !csvSelectionIsValid)
+        const nothingSelected = (!this.state.teamsOptionSelected) && (!this.state.rostersOptionSelected) && (!this.state.groupsOptionSelected) && (!this.state.allUsersOptionSelected);
+        return (!teamsSelectionIsValid || !rostersSelectionIsValid || !groupsSelectionIsValid || nothingSelected)
     }
 
     private isNextBtnDisabled = () => {
@@ -1135,13 +1031,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         const selectedTeams: string[] = [];
         const selctedRosters: string[] = [];
         const selectedGroups: string[] = [];
-        let selectedCSV = "";
-
         this.state.selectedTeams.forEach(x => selectedTeams.push(x.team.id));
         this.state.selectedRosters.forEach(x => selctedRosters.push(x.team.id));
         this.state.selectedGroups.forEach(x => selectedGroups.push(x.team.id));
-
-        if (this.state.csvOptionSelected) { selectedCSV = this.state.csvusers;}
 
         const draftMessage: IDraftMessage = {
             id: this.state.messageId,
@@ -1154,7 +1046,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             teams: selectedTeams,
             rosters: selctedRosters,
             groups: selectedGroups,
-            csvusers: selectedCSV,
             allUsers: this.state.allUsersOptionSelected,
             isScheduled: this.state.selectedSchedule,
             isImportant: this.state.selectedImportant,

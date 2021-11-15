@@ -26,11 +26,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Export.Model
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the user type.
-        /// </summary>
-        public string UserType { get; set; }
-
-        /// <summary>
         /// Gets or sets the delivery status value.
         /// </summary>
         public string DeliveryStatus { get; set; }

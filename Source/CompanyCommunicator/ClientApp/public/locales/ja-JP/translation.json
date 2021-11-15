@@ -62,7 +62,6 @@
   "Results": "結果",
   "Success": "成功: {{SuccessCount}}",
   "Failure": "エラー: {{FailureCount}}",
-  "Reads": "読み取り済み: {{ReadsCount}}",
   "Unknown": "不明: {{UnknownCount}}",
   "Throttled": "調整済み:",
   "TooltipSuccess": "成功",
@@ -98,14 +97,5 @@
   "ScheduledSendDescription": "メッセージをスケジュールする日時を選択します。少なくとも30分は予定してください。",
   "Add": "足す",
   "Buttons": "ボタン",
-  "NoButtons": "ボタンが定義されていません。ボタンとアクションをメッセージに含めるには、(+)をクリックします。",
-  "ErrorImageTooBigSize": "最大サイズの JPEG (または同等の) 圧縮画像をアップロードしてください",
-  "SendToCSV": "有効な CSV ファイルで提供されたユーザーの一覧にチャットで送信します。コンマで区切られた UPN (ヘッダーなし)。存在しないユーザーまたは無効なユーザーは無視されます。",
-  "LabelCSV": "CSV ファイルのアップロード",
-  "CSVLoaded": "CSV ファイルが正常に読み込まれました。",
-  "CSVInvalid": "CSV ファイルが無効です。",
-  "CSVUsersLabel": "CSV ファイルでアップロードされたユーザーリスト",
-  "SendToCSVUsersNote": "注: このオプションは、アップロードされた CSV ファイル内のすべてのユーザーにメッセージを送信します。",
-  "SentToCSV": "CSV ファイルで提供されたユーザーの一覧にチャットで送信",
-  "SentToAllUsers": "チャットですべての人に送信"
+  "NoButtons": "ボタンが定義されていません。ボタンとアクションをメッセージに含めるには、(+)をクリックします。"
 }

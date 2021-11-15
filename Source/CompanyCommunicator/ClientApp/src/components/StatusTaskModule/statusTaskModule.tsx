@@ -50,8 +50,6 @@ export interface IMessage {
     sendingCompleted?: boolean;
     buttons: string;
     isImportant?: boolean;
-    reads?: string;
-    csvUsers: string;
 }
 
 export interface IStatusState {
@@ -69,7 +67,6 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
         id: "",
         title: "",
         buttons: "[]",
-        csvUsers: "",
     };
 
     private card: any;
@@ -139,7 +136,6 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             response.data.sentDate = formatDate(response.data.sentDate);
             response.data.succeeded = formatNumber(response.data.succeeded);
             response.data.failed = formatNumber(response.data.failed);
-            response.data.reads = formatNumber(response.data.reads);
             response.data.unknown = response.data.unknown && formatNumber(response.data.unknown);
             this.setState({
                 message: response.data
@@ -160,7 +156,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             if (this.state.page === "ViewStatus") {
                 return (
                     <div className="taskModule">
-                        <Flex column className="formContainer" vAlign="stretch" gap="gap.small">
+                        <Flex column className="formContainer" vAlign="stretch" gap="gap.small" styles={{ background: "white" }}>
                             <Flex className="scrollableContent">
                                 <Flex.Item size="size.half" className="formContentContainer">
                                     <Flex column>
@@ -185,8 +181,6 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                                             <label>{this.localize("Success", { "SuccessCount": this.state.message.succeeded })}</label>
                                             <br />
                                             <label>{this.localize("Failure", { "FailureCount": this.state.message.failed })}</label>
-                                            <br />
-                                            <label>{this.localize("Reads", { "ReadsCount": this.state.message.reads })}</label>
                                             <br />
                                             {this.state.message.unknown &&
                                                 <>
@@ -235,7 +229,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             else if (this.state.page === "SuccessPage") {
                 return (
                     <div className="taskModule">
-                        <Flex column className="formContainer" vAlign="stretch" gap="gap.small">
+                        <Flex column className="formContainer" vAlign="stretch" gap="gap.small" styles={{ background: "white" }}>
                             <div className="displayMessageField">
                                 <br />
                                 <br />
@@ -260,7 +254,7 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
             else {
                 return (
                     <div className="taskModule">
-                        <Flex column className="formContainer" vAlign="stretch" gap="gap.small">
+                        <Flex column className="formContainer" vAlign="stretch" gap="gap.small" styles={{ background: "white" }}>
                             <div className="displayMessageField">
                                 <br />
                                 <br />
@@ -344,15 +338,10 @@ class StatusTaskModule extends React.Component<StatusTaskModuleProps, IStatusSta
                     <span>{this.localize("SentToGroups2")}</span>
                     <List items={this.getItemList(this.state.message.groupNames)} />
                 </div>);
-        } else if (this.state.message.csvUsers && this.state.message.csvUsers.length > 0) {
-            return (
-                <div key="allUsers">
-                    <h3>{this.localize("SentToCSV")}</h3>
-                </div>);
         } else if (this.state.message.allUsers) {
             return (
                 <div>
-                    <h3>{this.localize("SentToAllUsers")}</h3>
+                    <h3>{this.localize("SendToAllUsers")}</h3>
                 </div>);
         } else {
             return (<div></div>);

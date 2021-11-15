@@ -18,13 +18,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
     public class NotificationDataRepository : BaseRepository<NotificationDataEntity>, INotificationDataRepository
     {
         /// <summary>
-        /// Maximum length of error and warning messages to save in the entity.
-        /// This limit ensures that we don't hit the Azure table storage limits for the max size of the data
-        /// in a column, and the total size of an entity.
-        /// </summary>
-        public const int MaxMessageLengthToSave = 1024;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="NotificationDataRepository"/> class.
         /// </summary>
         /// <param name="logger">The logging service.</param>
@@ -127,7 +120,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
                     Teams = draftNotificationEntity.Teams,
                     Rosters = draftNotificationEntity.Rosters,
                     Groups = draftNotificationEntity.Groups,
-                    CsvUsers = draftNotificationEntity.CsvUsers,
                     AllUsers = draftNotificationEntity.AllUsers,
                     MessageVersion = draftNotificationEntity.MessageVersion,
                     Succeeded = 0,
@@ -136,7 +128,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
                     TotalMessageCount = draftNotificationEntity.TotalMessageCount,
                     SendingStartedDate = DateTime.UtcNow,
                     Status = NotificationStatus.Queued.ToString(),
-                    TrackingUrl = draftNotificationEntity.TrackingUrl,
                 };
                 await this.CreateOrUpdateAsync(sentNotificationEntity);
 
@@ -182,8 +173,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
                     Groups = notificationEntity.Groups,
                     Rosters = notificationEntity.Rosters,
                     AllUsers = notificationEntity.AllUsers,
-                    CsvUsers = notificationEntity.CsvUsers,
-                    TrackingUrl = notificationEntity.TrackingUrl,
                 };
 
                 await this.CreateOrUpdateAsync(newNotificationEntity);
@@ -219,14 +208,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
                 notificationDataEntityId);
             if (notificationDataEntity != null)
             {
-                var newMessage = this.AppendNewLine(notificationDataEntity.ErrorMessage, errorMessage);
-
-                // Restrict the total length of stored message to avoid hitting table storage limits
-                if (newMessage.Length <= MaxMessageLengthToSave)
-                {
-                    notificationDataEntity.ErrorMessage = newMessage;
-                }
-
+                notificationDataEntity.ErrorMessage =
+                    this.AppendNewLine(notificationDataEntity.ErrorMessage, errorMessage);
                 notificationDataEntity.Status = NotificationStatus.Failed.ToString();
 
                 // Set the end date as current date.
@@ -248,14 +231,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
                     notificationDataEntityId);
                 if (notificationDataEntity != null)
                 {
-                    var newMessage = this.AppendNewLine(notificationDataEntity.WarningMessage, warningMessage);
-
-                    // Restrict the total length of stored message to avoid hitting table storage limits
-                    if (newMessage.Length <= MaxMessageLengthToSave)
-                    {
-                        notificationDataEntity.WarningMessage = newMessage;
-                    }
-
+                    notificationDataEntity.WarningMessage =
+                        this.AppendNewLine(notificationDataEntity.WarningMessage, warningMessage);
                     await this.CreateOrUpdateAsync(notificationDataEntity);
                 }
             }

@@ -44,11 +44,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
         public IEnumerable<string> Groups { get; set; }
 
         /// <summary>
-        /// Gets or sets csvusers JSON string.
-        /// </summary>
-        public string CsvUsers { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether a notification should be sent to all the users.
         /// </summary>
         public bool AllUsers { get; set; }
@@ -57,11 +52,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
         /// Gets or sets ScheduledDate value.
         /// </summary>
         public DateTime? ScheduledDate { get; set; }
-
-        /// <summary>
-        /// Gets or sets TrackingUrl value.
-        /// </summary>
-        public string TrackingUrl { get; set; }
 
         /// <summary>
         /// Validates a draft notification.

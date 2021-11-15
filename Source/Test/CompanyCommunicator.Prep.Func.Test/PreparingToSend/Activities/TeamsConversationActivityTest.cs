@@ -85,7 +85,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
             };
 
             // Act
-            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, "batchPartitionKey", reciepient), this.logger.Object);
+            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, reciepient), this.logger.Object);
 
             // Assert
             await task.Should().NotThrowAsync();
@@ -107,12 +107,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
                 UserId = "userId",
                 TenantId = "tenantId",
                 ServiceUrl = "serviceUrl",
-                UserType = "Member",
             };
             CreateConversationResponse response = new CreateConversationResponse()
             {
                 Result = Result.Succeeded,
-                ConversationId = "conversationId",
+                ConversationId = "conversationid",
             };
             this.conversationService
                 .Setup(x => x.CreateUserConversationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), this.logger.Object))
@@ -128,7 +127,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
                 .Returns(Task.CompletedTask);
 
             // Act
-            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, "batchPartitionKey", recipient), this.logger.Object);
+            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, recipient), this.logger.Object);
 
             // Assert
             await task.Should().NotThrowAsync();
@@ -139,7 +138,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
                 It.IsAny<int>(),
                 this.logger.Object));
             this.userDataRepository.Verify(x => x.InsertOrMergeAsync(It.Is<UserDataEntity>(x => recipient.UserId.Equals(x.UserId))));
-            this.sentNotificationDataRepository.Verify(x => x.InsertOrMergeAsync(It.IsAny<SentNotificationDataEntity>()), Times.Exactly(2));
         }
 
         /// <summary>
@@ -156,60 +154,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
             {
                 UserId = string.Empty,
                 RecipientId = "recipientId",
-                UserType = "Member",
             };
 
             // Act
-            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, "batchPartitionKey", recipient), this.logger.Object);
-
-            // Assert
-            await task.Should().NotThrowAsync();
-        }
-
-        /// <summary>
-        /// Test case to verify that do not process anything in case of guest user.
-        /// </summary>
-        /// <returns>A task that represents the work queued to execute.</returns>
-        [Fact]
-        public async Task TeamConversation_GuestUser_ShouldNotDoAnything()
-        {
-            // Arrange
-            var activityContext = this.GetTeamsConversationActivity(true/*proactivelyInstallUserApp*/);
-            var notificationId = "notificationId";
-            SentNotificationDataEntity recipient = new SentNotificationDataEntity()
-            {
-                UserId = string.Empty,
-                RecipientId = "recipientId",
-                UserType = "Guest",
-            };
-
-            // Act
-            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, "batchPartitionKey", recipient), this.logger.Object);
-
-            // Assert
-            await task.Should().NotThrowAsync();
-            this.appSettingsService.Verify(x => x.GetUserAppIdAsync(), Times.Never);
-        }
-
-        /// <summary>
-        /// Test case to verify that exception is not thrown in case of null user type.
-        /// </summary>
-        /// <returns>A task that represents the work queued to execute.</returns>
-        [Fact]
-        public async Task TeamConversation_NullUserType_ShouldNotThrowException()
-        {
-            // Arrange
-            var activityContext = this.GetTeamsConversationActivity(false/*proactivelyInstallUserApp*/);
-            var notificationId = "notificationId";
-            SentNotificationDataEntity recipient = new SentNotificationDataEntity()
-            {
-                UserId = string.Empty,
-                RecipientId = "recipientId",
-                UserType = null,
-            };
-
-            // Act
-            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, "batchPartitionKey", recipient), this.logger.Object);
+            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, recipient), this.logger.Object);
 
             // Assert
             await task.Should().NotThrowAsync();
@@ -232,7 +180,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
             {
                 UserId = string.Empty,
                 RecipientId = "recipientId",
-                UserType = "Member",
             };
 
             this.appSettingsService
@@ -249,7 +196,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
                 .Returns(Task.FromResult(serviceUrl));
 
             // Act
-            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, "batchPartitionKey", recipient), this.logger.Object);
+            Func<Task> task = async () => await activityContext.CreateConversationAsync((notificationId, recipient), this.logger.Object);
 
             // Assert
             await task.Should().NotThrowAsync();
@@ -275,21 +222,18 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.Test.PreparingToSen
         {
             // Arrange
             var activityContext = this.GetTeamsConversationActivity();
-            string notificationId = "notificationId";
-            string batchPartitionKey = "batchPartitionKey";
+            string notificationId = "notificationid";
             SentNotificationDataEntity recipient = new SentNotificationDataEntity();
 
             // Act
-            Func<Task> task = async () => await activityContext.CreateConversationAsync((null /*notificationId*/, batchPartitionKey, recipient), this.logger.Object);
-            Func<Task> task1 = async () => await activityContext.CreateConversationAsync((notificationId, null /*batchPartitionKey*/, recipient), this.logger.Object);
-            Func<Task> task2 = async () => await activityContext.CreateConversationAsync((notificationId, batchPartitionKey, null /*recipient*/), this.logger.Object);
-            Func<Task> task3 = async () => await activityContext.CreateConversationAsync((notificationId, batchPartitionKey, recipient), null /*log*/);
+            Func<Task> task = async () => await activityContext.CreateConversationAsync((null /*notificationId*/, recipient), this.logger.Object);
+            Func<Task> task1 = async () => await activityContext.CreateConversationAsync((notificationId, null /*recipient*/), this.logger.Object);
+            Func<Task> task2 = async () => await activityContext.CreateConversationAsync((notificationId, recipient), null /*log*/);
 
             // Assert
             await task.Should().ThrowAsync<ArgumentNullException>("notificationId is null");
-            await task1.Should().ThrowAsync<ArgumentNullException>("batch partition key is null");
-            await task2.Should().ThrowAsync<ArgumentNullException>("recipient is null");
-            await task3.Should().ThrowAsync<ArgumentNullException>("log is null");
+            await task1.Should().ThrowAsync<ArgumentNullException>("recipient is null");
+            await task2.Should().ThrowAsync<ArgumentNullException>("log is null");
         }
 
         /// <summary>
