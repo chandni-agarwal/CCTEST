@@ -148,6 +148,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
         }
 
         /// <summary>
+        /// Gets or sets the CsvUsersInString value.
+        /// </summary>
+        public string CsvUsers { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether a notification should be sent to all the
         /// known users - this is equivalent to all of the users stored in the User Data table.
         /// </summary>
@@ -228,5 +233,15 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
         /// Gets or sets notification status.
         /// </summary>
         public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets notification reads.
+        /// </summary>
+        public int Reads { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tracking url for the message.
+        /// </summary>
+        public string TrackingUrl { get; set; }
     }
 }

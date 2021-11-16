@@ -61,7 +61,8 @@
   "Duration": "משך זמן",
   "Results": "תוצאות",
   "Success": "הצלחה: {{SuccessCount}}",
-  "Failure": "כשל : {{FailureCount}}",
+  "Failure": "כשל  : {{FailureCount}}",
+  "Reads": "נקרא : {{ReadsCount}}",
   "Unknown": "לא ידוע : {{UnknownCount}}",
   "Throttled": "מווסת :",
   "TooltipSuccess": "הצלחה",
@@ -97,5 +98,14 @@
   "ScheduledSendDescription": "בחר תאריך ושעה לתזמון ההודעה. נא לתזמן לפחות 30 דקות בעתיד.",
   "Add": "הוסף",
   "Buttons": "לחצנים",
-  "NoButtons": "לא הוגדרו לחצנים. לחץ על (+) כדי לכלול לחצנים ופעולות בהודעה."
+  "NoButtons": "לא הוגדרו לחצנים. לחץ על (+) כדי לכלול לחצנים ופעולות בהודעה.",
+  "ErrorImageTooBigSize": "נא העלה תמונה דחוסה JPEG (או שווה ערך) בגודל המרבי של",
+  "SendToCSV": "שלח צ'אט לרשימת משתמשים שסופקו בקובץ CSV חוקי. UPNs מופרדים באמצעות פסיק (ללא כותרות). המערכת תתעלם ממשתמשים שאינם קיימים או לא חוקיים.",
+  "LabelCSV": "העלאת קובץ CSV",
+  "CSVLoaded": "קובץ CSV נטען בהצלחה!",
+  "CSVInvalid": "קובץ ה- CSV אינו חוקי!",
+  "CSVUsersLabel": "רשימת משתמשים שהועלתה על-ידי קובץ CSV",
+  "SendToCSVUsersNote": "הערה: אפשרות זו שולחת את ההודעה לכל המשתמשים בקובץ ה- CSV שהועלה.",
+  "SentToCSV": "נשלח בצ'אט לרשימת משתמשים שסופקו בקובץ CSV",
+  "SentToAllUsers": "נשלח בצ'אט לכולם"
 }

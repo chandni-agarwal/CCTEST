@@ -41,6 +41,12 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.SentNotif
         public static readonly int FinalFaultedStatusCode = -2;
 
         /// <summary>
+        /// This value indicates that operation is not supported by Azure Function and will
+        /// not be processed further.
+        /// </summary>
+        public static readonly int NotSupportedStatusCode = -3;
+
+        /// <summary>
         /// String indicating the recipient type for the given notification was a user.
         /// </summary>
         public static readonly string UserRecipientType = "User";
@@ -170,6 +176,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.SentNotif
         public string TenantId { get; set; }
 
         /// <summary>
+        /// Gets or sets the user type for the recipient.
+        /// </summary>
+        public string UserType { get; set; }
+
+        /// <summary>
         /// Gets or sets the user id for the recipient.
         /// </summary>
         public string UserId { get; set; }
@@ -184,5 +195,15 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.SentNotif
         /// only the final one will be stored here.
         /// </summary>
         public string ErrorMessage { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether a specific message instance was read by the user.
+        /// </summary>
+        public bool ReadStatus { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating when a specific message instance was read by the user.
+        /// </summary>
+        public DateTime? ReadDate { get; set; }
     }
 }

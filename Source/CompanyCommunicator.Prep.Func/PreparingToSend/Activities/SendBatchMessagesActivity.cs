@@ -23,15 +23,19 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.PreparingToSend
     public class SendBatchMessagesActivity
     {
         private readonly ISendQueue sendQueue;
+        private readonly INotificationDataRepository notificationDataRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SendBatchMessagesActivity"/> class.
         /// </summary>
         /// <param name="sendQueue">Send queue service.</param>
+        /// <param name="notificationDataRepository">Notification data repository.</param>
         public SendBatchMessagesActivity(
-            ISendQueue sendQueue)
+            ISendQueue sendQueue,
+            INotificationDataRepository notificationDataRepository)
         {
             this.sendQueue = sendQueue ?? throw new ArgumentNullException(nameof(sendQueue));
+            this.notificationDataRepository = notificationDataRepository ?? throw new ArgumentNullException(nameof(notificationDataRepository));
         }
 
         /// <summary>
@@ -41,11 +45,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.PreparingToSend
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [FunctionName(FunctionNames.SendBatchMessagesActivity)]
         public async Task RunAsync(
-            [ActivityTrigger](NotificationDataEntity notification, List<SentNotificationDataEntity> batch) input)
+            [ActivityTrigger](string notificationId, List<SentNotificationDataEntity> batch) input)
         {
-            if (input.notification == null)
+            if (input.notificationId == null)
             {
-                throw new ArgumentNullException(nameof(input.notification));
+                throw new ArgumentNullException(nameof(input.notificationId));
             }
 
             if (input.batch == null)
@@ -53,18 +57,30 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.PreparingToSend
                 throw new ArgumentNullException(nameof(input.batch));
             }
 
+            // checks if the message is important
+            var isImportant = await this.IsImportantMessage(input.notificationId);
+
             var messageBatch = input.batch.Select(
                 recipient =>
                 {
                     return new SendQueueMessageContent()
                     {
-                        NotificationId = input.notification.Id,
-                        IsImportant = input.notification.IsImportant,
+                        NotificationId = input.notificationId,
+                        IsImportant = isImportant,
                         RecipientData = this.ConvertToRecipientData(recipient),
                     };
                 });
 
             await this.sendQueue.SendAsync(messageBatch);
+        }
+
+        private async Task<bool> IsImportantMessage(string messageId)
+        {
+            NotificationDataEntity notif;
+
+            notif = await this.notificationDataRepository.GetAsync(NotificationDataTableNames.SentNotificationsPartition, messageId);
+
+            return notif.IsImportant;
         }
 
         /// <summary>
@@ -86,6 +102,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.PreparingToSend
                         ConversationId = recipient.ConversationId,
                         ServiceUrl = recipient.ServiceUrl,
                         TenantId = recipient.TenantId,
+                        UserType = recipient.UserType,
                     },
                 };
             }

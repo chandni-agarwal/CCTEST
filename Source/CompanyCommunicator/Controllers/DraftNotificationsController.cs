@@ -86,6 +86,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 return this.Forbid();
             }
 
+            notification.TrackingUrl = this.HttpContext.Request.Scheme + "://" + this.HttpContext.Request.Host + "/api/sentNotifications/tracking";
+
             var notificationId = await this.notificationDataRepository.CreateDraftNotificationAsync(
                 notification,
                 this.HttpContext.User?.Identity?.Name);
@@ -162,8 +164,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 Teams = notification.Teams,
                 Rosters = notification.Rosters,
                 Groups = notification.Groups,
+                CsvUsers = notification.CsvUsers,
                 AllUsers = notification.AllUsers,
                 Buttons = notification.Buttons,
+                TrackingUrl = this.HttpContext.Request.Scheme + "://" + this.HttpContext.Request.Host + "/api/sentNotifications/tracking",
             };
 
             await this.notificationDataRepository.CreateOrUpdateAsync(notificationEntity);
@@ -282,11 +286,13 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 Teams = notificationEntity.Teams,
                 Rosters = notificationEntity.Rosters,
                 Groups = notificationEntity.Groups,
+                CsvUsers = notificationEntity.CsvUsers,
                 AllUsers = notificationEntity.AllUsers,
                 IsScheduled = notificationEntity.IsScheduled,
                 IsImportant = notificationEntity.IsImportant,
                 ScheduledDate = notificationEntity.ScheduledDate,
                 Buttons = notificationEntity.Buttons,
+                TrackingUrl = notificationEntity.TrackingUrl,
             };
 
             return this.Ok(result);
