@@ -18,9 +18,6 @@ import { getBaseUrl } from '../../configVariables';
 import { ImageUtil } from '../../utility/imageutility';
 import { TFunction } from "i18next";
 
-import {SimpleMarkdownEditor} from 'react-simple-markdown-editor';
-import {Markdown} from 'react-remarkable';
-
 
 //hours to be chosen when scheduling messages
 const hours = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11",
@@ -559,15 +556,11 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             <Text content={this.localize("Summary")} />
                                             <TextArea
                                                 autoFocus
-                                                id="summaryTextArea"
                                                 placeholder={this.localize("Summary")}
                                                 value={this.state.summary}
                                                 onChange={this.onSummaryChanged}
                                                 fluid />
                                         </div>
-                                        
-                                        <SimpleMarkdownEditor textAreaID={"summaryTextArea"} enabledButtons={{image: false}} />
-                                        <Markdown source={this.state.summary} />
 
                                         <Input className="inputField"
                                             value={this.state.author}
