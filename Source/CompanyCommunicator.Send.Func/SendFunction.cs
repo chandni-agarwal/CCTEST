@@ -9,6 +9,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
     using System.Threading.Tasks;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Bot.Builder;
+    using Microsoft.Bot.Builder.Teams;
     using Microsoft.Bot.Schema;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.SentNotificationData;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Resources;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MessageQueues.SendQueue;
+    using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MicrosoftGraph;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.Teams;
     using Microsoft.Teams.Apps.CompanyCommunicator.Send.Func.Services;
     using Newtonsoft.Json;
@@ -105,6 +107,19 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
 
             try
             {
+                // Check if recipient is a guest user.
+                if (messageContent.IsRecipientGuestUser())
+                {
+                    await this.notificationService.UpdateSentNotification(
+                        notificationId: messageContent.NotificationId,
+                        recipientId: messageContent.RecipientData.RecipientId,
+                        totalNumberOfSendThrottles: 0,
+                        statusCode: SentNotificationDataEntity.NotSupportedStatusCode,
+                        allSendStatusCodes: $"{SentNotificationDataEntity.NotSupportedStatusCode},",
+                        errorMessage: this.localizer.GetString("GuestUserNotSupported"));
+                    return;
+                }
+
                 // Check if notification is pending.
                 var isPending = await this.notificationService.IsPendingNotification(messageContent);
                 if (!isPending)
@@ -137,6 +152,13 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
 
                 // Send message.
                 var messageActivity = await this.GetMessageActivity(messageContent);
+
+                // If the message is important, we need to notify the user in Teams
+                if (messageContent.IsImportant)
+                {
+                    messageActivity.TeamsNotifyUser();
+                }
+
                 var response = await this.messageService.SendMessageAsync(
                     message: messageActivity,
                     serviceUrl: messageContent.GetServiceUrl(),
@@ -227,6 +249,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Send.Func
             var notification = await this.notificationRepo.GetAsync(
                 NotificationDataTableNames.SendingNotificationsPartition,
                 message.NotificationId);
+
+            // replacing id and key for read tracking purposes
+            notification.Content = notification.Content.Replace("[ID]", message.NotificationId);
+            notification.Content = notification.Content.Replace("[KEY]", message.RecipientData.RecipientId);
 
             var adaptiveCardAttachment = new Attachment()
             {

@@ -25,7 +25,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -77,13 +76,9 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>8.0</LangVersion>
-<<<<<<< HEAD:Source/CompanyCommunicator/Microsoft.Teams.Apps.CompanyCommunicator.csproj
     <UserSecretsId>2e464615-9805-4f14-8ecf-e648efd77a99</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <AssemblyName>Microsoft.Teams.Apps.CompanyCommunicator</AssemblyName>
-=======
-    <UserSecretsId>dc377c4a-8e28-406d-9ac9-87ae6b8d9afa</UserSecretsId>
->>>>>>> d601247dc8a634695c6b8aa2523c47f65ccf3c0a:Source/Microsoft.Teams.Apps.CompanyCommunicator/Microsoft.Teams.Apps.CompanyCommunicator.csproj
   </PropertyGroup>
 
 </Project>
