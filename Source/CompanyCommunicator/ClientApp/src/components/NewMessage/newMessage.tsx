@@ -473,30 +473,30 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             // this is to ensure compatibility with older versions
             // if we get empty buttonsJSON and values on buttonTitle and buttonLink, we insert those to values
             // if not we just use values cause the JSON will be complete over there
-            // if (draftMessageDetail.buttonTitle && draftMessageDetail.buttonLink && !draftMessageDetail.buttons) {
-            //     this.setState({
-            //         values: [{
-            //             "type": "Action.OpenUrl",
-            //             "title": draftMessageDetail.buttonTitle,
-            //             "url": draftMessageDetail.buttonLink
-            //         }]
-            //     });
-            //  }
-            // else {
-            //     // set the values state with the parse of the JSON recovered from the database
-            //     if (draftMessageDetail.buttons !== null) { //if the database value is not null, parse the JSON to create the button objects
-            //         this.setState({
-            //             values: JSON.parse(draftMessageDetail.buttons)
-            //         });
-            //     } else { //if the string is null, then initialize the empty collection 
-            //         this.setState({
-            //             values: []
-            //         });
-            //     }
-            // }
+            if (draftMessageDetail.buttonTitle && draftMessageDetail.buttonLink && !draftMessageDetail.buttons) {
+                this.setState({
+                    values: [{
+                        "type": "Action.OpenUrl",
+                        "title": draftMessageDetail.buttonTitle,
+                        "url": draftMessageDetail.buttonLink
+                    }]
+                });
+             }
+            else {
+                // set the values state with the parse of the JSON recovered from the database
+                if (draftMessageDetail.buttons !== null) { //if the database value is not null, parse the JSON to create the button objects
+                    this.setState({
+                        values: JSON.parse(draftMessageDetail.buttons)
+                    });
+                } else { //if the string is null, then initialize the empty collection 
+                    this.setState({
+                        values: []
+                    });
+                }
+            }
 
-            // // set the card buttons collection based on the values collection
-            // setCardBtns(this.card, this.state.values);
+            // set the card buttons collection based on the values collection
+            setCardBtns(this.card, this.state.values);
             this.setState({
                 title: draftMessageDetail.title,
                 summary: draftMessageDetail.summary,
@@ -589,7 +589,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                         </Flex>
                                         <Text className={(this.state.errorImageUrlMessage === "") ? "hide" : "show"} error size="small" content={this.state.errorImageUrlMessage} />
 
-                                        {/* <div className="textArea">
+                                        <div className="textArea">
                                             <Text content={this.localize("Summary")} />
                                             <TextArea
                                                 autoFocus
@@ -597,7 +597,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                 value={this.state.summary}
                                                 onChange={this.onSummaryChanged}
                                                 fluid />
-                                        </div> */}
+                                        </div> 
 
                                         <div>
                                         <p className='sum-label'>Summary</p>
@@ -631,7 +631,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             autoComplete="off"
                                             fluid
                                         />
-                                        {/* <div className="textArea">
+                                        <div className="textArea">
                                             <Flex gap="gap.large" vAlign="end">
                                                 <Text size="small" align="start" content={this.localize("Buttons")} />
                                                 <Flex.Item push >
@@ -640,7 +640,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             </Flex>
                                         </div>
                                         
-                                        {this.createUI()} */}
+                                        {this.createUI()}
 
                                         <Input className="inputField"
                                             fluid
@@ -1348,161 +1348,161 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         });
     }
 
-    // private function to create the buttons UI
-    // private createUI() {
-    //     if (this.state.values.length > 0) {
-    //         return this.state.values.map((el, i) =>
-    //             <Flex gap="gap.smaller" vAlign="center">
-    //                 <Input className="inputField"
-    //                     fluid
-    //                     value={el.title || ''}
-    //                     placeholder={this.localize("ButtonTitle")}
-    //                     onChange={this.handleChangeName.bind(this, i)}
-    //                     autoComplete="off"
-    //                 />
-    //                 <Input className="inputField"
-    //                     fluid
-    //                     value={el.url || ''}
-    //                     placeholder={this.localize("ButtonURL")}
-    //                     onChange={this.handleChangeLink.bind(this, i)}
-    //                     error={!(this.state.errorButtonUrlMessage === "")}
-    //                     autoComplete="off"
-    //                 />
-    //                 <Button
-    //                     circular
-    //                     size="small"
-    //                     icon={<TrashCanIcon />}
-    //                     onClick={this.removeClick.bind(this, i)}
-    //                     title={this.localize("Delete")}
-    //                 />
-    //             </Flex>
-    //         )
-    //     } else {
-    //         return (
-    //             < Flex >
-    //                 <Text size="small" content={this.localize("NoButtons") } />
-    //             </Flex>
-    //         )
-    //     }
-    // }
+    private function to create the buttons UI
+    private createUI() {
+        if (this.state.values.length > 0) {
+            return this.state.values.map((el, i) =>
+                <Flex gap="gap.smaller" vAlign="center">
+                    <Input className="inputField"
+                        fluid
+                        value={el.title || ''}
+                        placeholder={this.localize("ButtonTitle")}
+                        onChange={this.handleChangeName.bind(this, i)}
+                        autoComplete="off"
+                    />
+                    <Input className="inputField"
+                        fluid
+                        value={el.url || ''}
+                        placeholder={this.localize("ButtonURL")}
+                        onChange={this.handleChangeLink.bind(this, i)}
+                        error={!(this.state.errorButtonUrlMessage === "")}
+                        autoComplete="off"
+                    />
+                    <Button
+                        circular
+                        size="small"
+                        icon={<TrashCanIcon />}
+                        onClick={this.removeClick.bind(this, i)}
+                        title={this.localize("Delete")}
+                    />
+                </Flex>
+            )
+        } else {
+            return (
+                < Flex >
+                    <Text size="small" content={this.localize("NoButtons") } />
+                </Flex>
+            )
+        }
+    }
 
-    //private function to add a new button to the adaptive card
-    // private addClick() {
-    //     const item =
-    //     {
-    //         type: "Action.OpenUrl",
-    //         title: "",
-    //         url: ""
-    //     };
-    //     this.setState({
-    //         values: [...this.state.values, item]
-    //     });
-    // }
+    private function to add a new button to the adaptive card
+    private addClick() {
+        const item =
+        {
+            type: "Action.OpenUrl",
+            title: "",
+            url: ""
+        };
+        this.setState({
+            values: [...this.state.values, item]
+        });
+    }
 
-    //private function to remove a button from the adaptive card
-    // private removeClick(i: any) {
-    //     let values = [...this.state.values];
-    //     values.splice(i, 1);
-    //     this.setState({ values });
+    private function to remove a button from the adaptive card
+    private removeClick(i: any) {
+        let values = [...this.state.values];
+        values.splice(i, 1);
+        this.setState({ values });
 
-    //     const showDefaultCard = (!this.state.title && !this.state.imageLink && !this.state.summary && !this.state.author && values.length == 0);
-    //     setCardTitle(this.card, this.state.title);
-    //     setCardImageLink(this.card, this.state.imageLink);
-    //     setCardSummary(this.card, this.state.summary);
-    //     setCardAuthor(this.card, this.state.author);
-    //     if (values.length > 0) { //only if there are buttons created
-    //         setCardBtns(this.card, values); //update the adaptive card
-    //         this.setState({
-    //             card: this.card
-    //         }, () => {
-    //             if (showDefaultCard) {
-    //                 this.setDefaultCard(this.card);
-    //             }
-    //             this.updateCard();
-    //         });
-    //     } else {
-    //         this.setState({
-    //             errorButtonUrlMessage: ""
-    //         });
-    //         delete this.card.actions;
-    //         if (showDefaultCard) {
-    //             this.setDefaultCard(this.card);
-    //         }
-    //         this.updateCard();
-    //     };
-    // }
+        const showDefaultCard = (!this.state.title && !this.state.imageLink && !this.state.summary && !this.state.author && values.length == 0);
+        setCardTitle(this.card, this.state.title);
+        setCardImageLink(this.card, this.state.imageLink);
+        setCardSummary(this.card, this.state.summary);
+        setCardAuthor(this.card, this.state.author);
+        if (values.length > 0) { //only if there are buttons created
+            setCardBtns(this.card, values); //update the adaptive card
+            this.setState({
+                card: this.card
+            }, () => {
+                if (showDefaultCard) {
+                    this.setDefaultCard(this.card);
+                }
+                this.updateCard();
+            });
+        } else {
+            this.setState({
+                errorButtonUrlMessage: ""
+            });
+            delete this.card.actions;
+            if (showDefaultCard) {
+                this.setDefaultCard(this.card);
+            }
+            this.updateCard();
+        };
+    }
 
-    //private function to deal with changes in the button names
-    // private handleChangeName(i: any, event: any) {
-    //     let values = [...this.state.values];
-    //     values[i].title = event.target.value;
-    //     this.setState({ values });
+    private function to deal with changes in the button names
+    private handleChangeName(i: any, event: any) {
+        let values = [...this.state.values];
+        values[i].title = event.target.value;
+        this.setState({ values });
 
-    //     const showDefaultCard = (!this.state.title && !this.state.imageLink && !this.state.summary && !this.state.author && !event.target.value && values.length == 0);
-    //     setCardTitle(this.card, this.state.title);
-    //     setCardImageLink(this.card, this.state.imageLink);
-    //     setCardSummary(this.card, this.state.summary);
-    //     setCardAuthor(this.card, this.state.author);
-    //     if (values.length > 0) { //only if there are buttons created
-    //         setCardBtns(this.card, values); //update the adaptive card
-    //         this.setState({
-    //             card: this.card
-    //         }, () => {
-    //             if (showDefaultCard) {
-    //                 this.setDefaultCard(this.card);
-    //             }
-    //             this.updateCard();
-    //         });
-    //     } else {
-    //         delete this.card.actions;
-    //         if (showDefaultCard) {
-    //             this.setDefaultCard(this.card);
-    //         }
-    //         this.updateCard();
-    //     };
-    // }
+        const showDefaultCard = (!this.state.title && !this.state.imageLink && !this.state.summary && !this.state.author && !event.target.value && values.length == 0);
+        setCardTitle(this.card, this.state.title);
+        setCardImageLink(this.card, this.state.imageLink);
+        setCardSummary(this.card, this.state.summary);
+        setCardAuthor(this.card, this.state.author);
+        if (values.length > 0) { //only if there are buttons created
+            setCardBtns(this.card, values); //update the adaptive card
+            this.setState({
+                card: this.card
+            }, () => {
+                if (showDefaultCard) {
+                    this.setDefaultCard(this.card);
+                }
+                this.updateCard();
+            });
+        } else {
+            delete this.card.actions;
+            if (showDefaultCard) {
+                this.setDefaultCard(this.card);
+            }
+            this.updateCard();
+        };
+    }
 
-    //private function to deal with changes in the button links/urls
-    // private handleChangeLink(i: any, event: any) {
-    //     let values = [...this.state.values];
-    //     values[i].url = event.target.value;
-    //     this.setState({ values });
+    private function to deal with changes in the button links/urls
+    private handleChangeLink(i: any, event: any) {
+        let values = [...this.state.values];
+        values[i].url = event.target.value;
+        this.setState({ values });
 
-    //     //set the error message if the links have wrong values
-    //     //alert(values.findIndex(element => element.includes("https://")));
-    //     if (!(event.target.value === "" || event.target.value.toLowerCase().startsWith("https://"))) {
-    //         this.setState({
-    //             errorButtonUrlMessage: this.localize("ErrorURLMessage")
-    //         });
-    //     } else {
-    //         this.setState({
-    //             errorButtonUrlMessage: ""
-    //         });
-    //     }
+        //set the error message if the links have wrong values
+        //alert(values.findIndex(element => element.includes("https://")));
+        if (!(event.target.value === "" || event.target.value.toLowerCase().startsWith("https://"))) {
+            this.setState({
+                errorButtonUrlMessage: this.localize("ErrorURLMessage")
+            });
+        } else {
+            this.setState({
+                errorButtonUrlMessage: ""
+            });
+        }
 
-    //     const showDefaultCard = (!this.state.title && !this.state.imageLink && !this.state.summary && !this.state.author && !event.target.value && values.length == 0);
-    //     setCardTitle(this.card, this.state.title);
-    //     setCardImageLink(this.card, this.state.imageLink);
-    //     setCardSummary(this.card, this.state.summary);
-    //     setCardAuthor(this.card, this.state.author);
-    //     if (values.length > 0) {
-    //         setCardBtns(this.card, values); //update the card
-    //         this.setState({
-    //             card: this.card
-    //         }, () => {
-    //             if (showDefaultCard) {
-    //                 this.setDefaultCard(this.card);
-    //             }
-    //             this.updateCard();
-    //         });
-    //     } else {
-    //         delete this.card.actions;
-    //         if (showDefaultCard) {
-    //             this.setDefaultCard(this.card);
-    //         }
-    //         this.updateCard();
-    //     };
-    // }
+        const showDefaultCard = (!this.state.title && !this.state.imageLink && !this.state.summary && !this.state.author && !event.target.value && values.length == 0);
+        setCardTitle(this.card, this.state.title);
+        setCardImageLink(this.card, this.state.imageLink);
+        setCardSummary(this.card, this.state.summary);
+        setCardAuthor(this.card, this.state.author);
+        if (values.length > 0) {
+            setCardBtns(this.card, values); //update the card
+            this.setState({
+                card: this.card
+            }, () => {
+                if (showDefaultCard) {
+                    this.setDefaultCard(this.card);
+                }
+                this.updateCard();
+            });
+        } else {
+            delete this.card.actions;
+            if (showDefaultCard) {
+                this.setDefaultCard(this.card);
+            }
+            this.updateCard();
+        };
+    }
 
     private onImageUpload = (event: any) =>{
         let uniqueFileName = (!this.state.title && !this.state.imageLink && !this.state.summary && !event.target.value && !this.state.btnTitle && !this.state.btnLink);
