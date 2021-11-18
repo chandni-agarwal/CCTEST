@@ -54,10 +54,5 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.UserData
         /// Gets or sets the tenant id for the user.
         /// </summary>
         public string TenantId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user type i.e. Member or Guest.
-        /// </summary>
-        public string UserType { get; set; }
     }
 }

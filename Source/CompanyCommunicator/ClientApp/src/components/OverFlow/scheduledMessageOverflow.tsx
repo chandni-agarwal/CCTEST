@@ -10,7 +10,7 @@ import { Menu, MoreIcon } from '@fluentui/react-northstar';
 import * as microsoftTeams from "@microsoft/teams-js";
 
 import { getBaseUrl } from '../../configVariables';
-import { selectMessage, getMessagesList, getScheduledMessagesList, getDraftMessagesList } from '../../actions';
+import { selectMessage, getMessagesList, getScheduledMessagesList ,getDraftMessagesList } from '../../actions';
 import { deleteDraftNotification, duplicateDraftNotification, sendPreview } from '../../apis/messageListApi';
 import { TFunction } from "i18next";
 
@@ -21,7 +21,6 @@ export interface OverflowProps extends WithTranslation {
     selectMessage?: any;
     getMessagesList?: any;
     getScheduledMessagesList?: any;
-    getDraftMessagesList?: any;
 }
 
 export interface OverflowState {
@@ -125,7 +124,7 @@ class Overflow extends React.Component<OverflowProps, OverflowState> {
                                     menuOpen: false,
                                 });
                                 this.duplicateDraftMessage(this.props.message.id).then(() => {
-                                    this.props.getDraftMessagesList();
+                                    this.props.getScheduledMessagesList();
                                 });
                             }
                         },
@@ -138,7 +137,7 @@ class Overflow extends React.Component<OverflowProps, OverflowState> {
                                     menuOpen: false,
                                 });
                                 this.deleteDraftMessage(this.props.message.id).then(() => {
-                                    this.props.getScheduledMessagesList(); 
+                                    this.props.getScheduledMessagesList();
                                 });
                             }
                         },
@@ -195,4 +194,4 @@ const mapStateToProps = (state: any) => {
 }
 
 const overflowWithTranslation = withTranslation()(Overflow);
-export default connect(mapStateToProps, { selectMessage, getScheduledMessagesList, getDraftMessagesList, getMessagesList })(overflowWithTranslation);
+export default connect(mapStateToProps, { selectMessage, getScheduledMessagesList, getMessagesList })(overflowWithTranslation);

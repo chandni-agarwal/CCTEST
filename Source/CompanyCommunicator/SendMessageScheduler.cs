@@ -1,6 +1,6 @@
-﻿// <copyright file="SendMessageScheduler.cs" company="Microsoft">
+﻿// <copyright file="SendMessageScheduler.cs" company="Microsoft Corporation">
 // Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
+// Licensed under the MIT license.
 // </copyright>
 
 namespace Microsoft.Teams.Apps.CompanyCommunicator

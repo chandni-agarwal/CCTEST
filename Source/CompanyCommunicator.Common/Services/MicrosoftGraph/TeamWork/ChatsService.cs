@@ -8,7 +8,6 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MicrosoftGrap
     using System;
     using System.Threading.Tasks;
     using Microsoft.Graph;
-    using Microsoft.Teams.Apps.CompanyCommunicator.Common.Policies;
 
     /// <summary>
     /// Chats Service.
@@ -45,14 +44,13 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Services.MicrosoftGrap
             }
 
             var installationId = await this.appManagerService.GetAppInstallationIdForUserAsync(appId, userId);
-            var retryPolicy = PollyPolicy.GetGraphRetryPolicy(GraphConstants.MaxRetry);
-            var chat = await retryPolicy.ExecuteAsync(async () => await this.graphServiceClient.Users[userId]
+            var chat = await this.graphServiceClient.Users[userId]
                 .Teamwork
                 .InstalledApps[installationId]
                 .Chat
                 .Request()
                 .WithMaxRetry(GraphConstants.MaxRetry)
-                .GetAsync());
+                .GetAsync();
 
             return chat?.Id;
         }
