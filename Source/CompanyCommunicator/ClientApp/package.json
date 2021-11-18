@@ -83,9 +83,5 @@
     "@types/redux": "^3.6.0",
     "tslint": "^5.20.0",
     "tslint-microsoft-contrib": "6.2.0"
-  },
-  "msteams": {
-    "teamsAppId": "49ab4778-061c-4094-b93e-7bae38cbacb7"
   }
-  
 }
