@@ -466,7 +466,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                   <p className='sum-label'>Summary</p>
                                   <MdEditor
                                     style={{margin: "20px auto",
-                                    width: "87%"}}
+                                    width: "100%"}} //changed width
                                     renderHTML={(text) => mdParser.render(text)}
                                     onChange={({html, text})=> {    
                                         console.log( html, text)
