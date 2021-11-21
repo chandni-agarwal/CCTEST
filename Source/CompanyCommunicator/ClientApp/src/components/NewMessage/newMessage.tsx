@@ -462,32 +462,30 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                 fluid />
                                         </div> */}
 
-                                <div>
-
-                                  {/* <p className='sum-label'>Summary</p> */}
-                                  <MdEditor
-                                    label={this.localize("Summary")}
-                                    style={{margin: "20px auto",
-                                    width: "100%", innerHeight: "300px"}} //changed width
-                                    renderHTML={(text) => mdParser.render(text)}
-                                    onChange={({html, text})=> {    
-                                        console.log( html, text)
-                                        let showDefaultCard = (!this.state.title && !this.state.imageLink && !this.state.summary && !text && !this.state.btnTitle && !this.state.btnLink);   
-                                        setCardSummary(this.card, text);
-                                        this.setState({
-                                            summary: text,
-                                            card: this.card
-                                        }, () => {
-                                            if (showDefaultCard) {
-                                                this.setDefaultCard(this.card);
-                                            }
-                                            this.updateCard();
-                                        });
-                                      }}
-                                      onImageUpload={this.handleImageUpload}
-                                    />
-                                
-                                </div>
+                                        <div>
+                                        {/* <p className='sum-label'>Summary</p> */}
+                                            <Text content={this.localize("Summary")} />
+                                            <MdEditor
+                                                style={{margin: "20px auto",
+                                                width: "100%"}} //changed width
+                                                renderHTML={(text) => mdParser.render(text)}
+                                                onChange={({html, text})=> {    
+                                                    console.log(html, text)
+                                                    let showDefaultCard = (!this.state.title && !this.state.imageLink && !this.state.summary && !text && !this.state.btnTitle && !this.state.btnLink);   
+                                                    setCardSummary(this.card, text);
+                                                    this.setState({
+                                                        summary: text,
+                                                        card: this.card
+                                                    }, () => {
+                                                        if (showDefaultCard) {
+                                                            this.setDefaultCard(this.card);
+                                                        }
+                                                        this.updateCard();
+                                                    });
+                                                }}
+                                                onImageUpload={this.handleImageUpload}
+                                            />
+                                        </div>
 
                                         <Input className="inputField"
                                             value={this.state.author}
