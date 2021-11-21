@@ -462,11 +462,13 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                 fluid />
                                         </div> */}
 
-<div>
-                                  <p className='sum-label'>Summary</p>
+                                <div>
+
+                                  {/* <p className='sum-label'>Summary</p> */}
                                   <MdEditor
+                                    label={this.localize("Summary")}
                                     style={{margin: "20px auto",
-                                    width: "100%"}} //changed width
+                                    width: "100%", innerHeight: "300px"}} //changed width
                                     renderHTML={(text) => mdParser.render(text)}
                                     onChange={({html, text})=> {    
                                         console.log( html, text)
