@@ -2,17 +2,26 @@
 // Licensed under the MIT License.
 
 import * as React from 'react';
+import {SimpleMarkdownEditor} from 'react-simple-markdown-editor';
+// import MarkdownIt from 'markdown-it';
+// import MdEditor from 'react-markdown-editor-lite';
+// import { Guid } from "guid-typescript";
+// import 'react-markdown-editor-lite/lib/index.css';
 import { RouteComponentProps } from 'react-router-dom';
 import { withTranslation, WithTranslation } from "react-i18next";
+// import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import * as AdaptiveCards from "adaptivecards";
 import { Button, Loader, Dropdown, Text, Flex, Input, TextArea, RadioGroup, Checkbox, Datepicker } from '@fluentui/react-northstar'
+// line in cristianoag only:
 import { TrashCanIcon, AddIcon, FilesUploadIcon } from '@fluentui/react-icons-northstar'
 import * as microsoftTeams from "@microsoft/teams-js";
 import Resizer from 'react-image-file-resizer';
+// line in cristianoag only:
 import Papa from "papaparse";
 import './newMessage.scss';
 import './teamTheme.scss';
 import { getDraftNotification, getTeams, createDraftNotification, updateDraftNotification, searchGroups, getGroups, verifyGroupAccess } from '../../apis/messageListApi';
+// setCardBtn (not setCardBtns)
 import { getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary, setCardAuthor, setCardBtns } from '../AdaptiveCard/adaptiveCard';
 import { getBaseUrl } from '../../configVariables';
 import { ImageUtil } from '../../utility/imageutility';
@@ -45,24 +54,25 @@ export interface IDraftMessage {
     id?: string,
     title: string,
     imageLink?: string,
-    summary?: string,
+    summary?: string, // not any?
     author: string,
     buttonTitle?: string,
     buttonLink?: string,
     teams: any[],
     rosters: any[],
     groups: any[],
-    csvusers: string,
+    csvusers: string, // line in cristianoag only
     allUsers: boolean,
-    isImportant: boolean, // indicates if the message is important
+    isImportant: boolean, // indicates if the message is important -- line in cristianoag only
     isScheduled: boolean, // indicates if the message is scheduled
     ScheduledDate: Date, // stores the scheduled date
-    Buttons: string // stores tha card buttons (JSON)
+    Buttons: string // stores tha card buttons (JSON) -- line in cristianoag only
 }
 
 export interface formState {
     title: string,
     summary?: string,
+    // summary?: any,
     btnLink?: string,
     imageLink?: string,
     btnTitle?: string,
@@ -73,10 +83,10 @@ export interface formState {
     rostersOptionSelected: boolean,
     allUsersOptionSelected: boolean,
     groupsOptionSelected: boolean,
-    csvOptionSelected: boolean,
-    csvLoaded: string,
-    csvError: boolean,
-    csvusers: string,
+    csvOptionSelected: boolean, // line in cristianoag only
+    csvLoaded: string, // line in cristianoag only
+    csvError: boolean, // line in cristianoag only
+    csvusers: string, // line in cristianoag only
     teams?: any[],
     groups?: any[],
     exists?: boolean,
@@ -96,13 +106,13 @@ export interface formState {
     errorImageUrlMessage: string,
     errorButtonUrlMessage: string,
     selectedSchedule: boolean, //status of the scheduler checkbox
-    selectedImportant: boolean, //status of the importance selection on the interface
+    selectedImportant: boolean, //status of the importance selection on the interface -- line in cristianoag only
     scheduledDate: string, //stores the scheduled date in string format
-    DMY: Date, //scheduled date in date format
+    DMY: Date, //scheduled date in date format 
     DMYHour: string, //hour selected
     DMYMins: string, //mins selected
     futuredate: boolean, //if the date is in the future (valid schedule)
-    values: any[] //button values collection
+    values: any[] //button values collection -- line in cristianoag only
 }
 
 export interface INewMessageProps extends RouteComponentProps, WithTranslation {
@@ -113,10 +123,11 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     readonly localize: TFunction;
     private card: any;
     fileInput: any;
-    CSVfileInput: any;
+    CSVfileInput: any; // line in cristianoag only
 
     constructor(props: INewMessageProps) {
         super(props);
+        // initializeIcons();
         this.localize = this.props.t;
         this.card = getInitAdaptiveCard(this.localize);
         this.setDefaultCard(this.card);
@@ -134,10 +145,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             rostersOptionSelected: false,
             allUsersOptionSelected: false,
             groupsOptionSelected: false,
-            csvOptionSelected: false,
-            csvLoaded: "",
-            csvError: false,
-            csvusers: "",
+            csvOptionSelected: false, // line in cristianoag only
+            csvLoaded: "", // line in cristianoag only
+            csvError: false, // line in cristianoag only
+            csvusers: "", // line in cristianoag only
             messageId: "",
             loader: true,
             groupAccess: false,
@@ -154,18 +165,18 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             errorImageUrlMessage: "",
             errorButtonUrlMessage: "",
             selectedSchedule: false, //scheduler option is disabled by default
-            selectedImportant: false, //important flag for the msg is false by default
+            selectedImportant: false, //important flag for the msg is false by default -- line in cristianoag only
             scheduledDate: TempDate.toUTCString(), //current date in UTC string format
             DMY: TempDate, //current date in Date format
             DMYHour: this.getDateHour(TempDate.toUTCString()), //initialize with the current hour (rounded up)
             DMYMins: this.getDateMins(TempDate.toUTCString()), //initialize with the current minute (rounded up)
             futuredate: false, //by default the date is not in the future
-            values: [] //by default there are no buttons on the adaptive card
+            values: [] // by default there are no buttons on the adaptive card -- line in cristianoag only
         }
         this.fileInput = React.createRef();
-        this.CSVfileInput = React.createRef();
+        this.CSVfileInput = React.createRef(); // line in cristianoag only
         this.handleImageSelection = this.handleImageSelection.bind(this);
-        this.handleCSVSelection = this.handleCSVSelection.bind(this);
+        this.handleCSVSelection = this.handleCSVSelection.bind(this); // line in cristianoag only
     }
 
     public async componentDidMount() {
@@ -185,14 +196,14 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                         messageId: id,
                         selectedTeams: selectedTeams,
                         selectedRosters: selectedRosters,
-                        csvusers: this.state.csvusers,
+                        csvusers: this.state.csvusers, // line in cristianoag only
                         selectedSchedule: this.state.selectedSchedule,
-                        selectedImportant: this.state.selectedImportant,
+                        selectedImportant: this.state.selectedImportant, // line in cristianoag only
                         scheduledDate: this.state.scheduledDate,
                         DMY: this.getDateObject(this.state.scheduledDate),
                         DMYHour: this.getDateHour(this.state.scheduledDate),
                         DMYMins: this.getDateMins(this.state.scheduledDate),
-                        values: this.state.values
+                        values: this.state.values // line in cristianoag only
                     })
                 });
                 this.getGroupData(id).then(() => {
@@ -225,7 +236,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         const file = this.fileInput.current.files[0];
         if (file) { //if we have a file
             //resize the image to fit in the adaptivecard
-            var cardsize = JSON.stringify(this.card).length;
+            var cardsize = JSON.stringify(this.card).length; // line in cristianoag only
             Resizer.imageFileResizer(file, 400, 400, 'JPEG', 80, 0,
                 uri => {
                     if (uri.toString().length < 30720) {
@@ -250,7 +261,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         }
     }
 
-    //Function to handle the CSV File selection
+    //Function to handle the CSV File selection -- funciton in cristianoag only
     private handleCSVSelection() {
         //get the first file selected
         const file = this.CSVfileInput.current.files[0];
@@ -291,7 +302,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         this.fileInput.current.click();
     };
 
-    //Function calling a click event on a hidden file input
+    //Function calling a click event on a hidden file input -- function in cristianoag only
     private handleCSVUploadClick = (event: any) => {
         this.setState({
             csvLoaded: "",
@@ -349,6 +360,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         setCardImageLink(card, imgUrl);
         setCardSummary(card, summaryAsString);
         setCardAuthor(card, authorAsString);
+        // setCardBtn(card, buttonTitleAsString, "https://adaptivecards.io");
+        // instead of setCardBtns(..);
         setCardBtns(card, [{
             "type": "Action.OpenUrl",
             "title": "Button",
@@ -410,7 +423,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
             const response = await getDraftNotification(id);
             const draftMessageDetail = response.data;
-            //temp message to update the csvLoaded
+
+            //temp message to update the csvLoaded -- line in cristianoag only
             let csvMsg = "";
 
             let selectedRadioButton = "teams";
@@ -420,6 +434,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (draftMessageDetail.groups.length > 0) {
                 selectedRadioButton = "groups";
             }
+            // else-if statement in cristianoag only
             else if (draftMessageDetail.csvUsers.length > 0) { //we have a message sending to CSV users
                 selectedRadioButton = "csv"; //select the csv option radio
                 csvMsg = this.localize("CSVLoaded"); //update the message that will update the state
@@ -443,8 +458,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 selectedRosters: draftMessageDetail.rosters,
                 selectedGroups: draftMessageDetail.groups,
                 selectedSchedule: draftMessageDetail.isScheduled,
+                // line in cristianoag only:
                 selectedImportant: draftMessageDetail.isImportant,
                 scheduledDate: draftMessageDetail.scheduledDate,
+                // line(s) in cristianoag only:
                 csvusers: draftMessageDetail.csvUsers, //update the state with the list of users (JSON)
                 csvLoaded: csvMsg, //updates the message that will be presented in the text field
                 csvError: !(csvMsg.length > 0), //state that stores the csv syntax analysis status
@@ -456,7 +473,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             setCardImageLink(this.card, draftMessageDetail.imageLink);
             setCardSummary(this.card, draftMessageDetail.summary);
             setCardAuthor(this.card, draftMessageDetail.author);
+            // setCardBtn(this.card, draftMessageDetail.buttonTitle, draftMessageDetail.buttonLink);
 
+            // if...else... statement in cristianoag only:
             // this is to ensure compatibility with older versions
             // if we get empty buttonsJSON and values on buttonTitle and buttonLink, we insert those to values
             // if not we just use values cause the JSON will be complete over there
@@ -482,8 +501,11 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 }
             }
 
+            // line in cristianoag only:
             // set the card buttons collection based on the values collection
             setCardBtns(this.card, this.state.values);
+
+
             this.setState({
                 title: draftMessageDetail.title,
                 summary: draftMessageDetail.summary,
@@ -506,6 +528,13 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
     }
 
     public render(): JSX.Element {
+        // // Initialize a markdown parser
+        // const mdParser = new MarkdownIt({
+        //     html: true,
+        //     linkify: true,
+        //     typographer: true,
+        // });
+
         if (this.state.loader) {
             return (
                 <div className="Loader">
@@ -516,6 +545,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             if (this.state.page === "CardCreation") {
                 return (
                     <div className="taskModule">
+                        {/* below Flex can also have styles={{ background: "white" }} */}
                         <Flex column className="formContainer" vAlign="stretch" gap="gap.small">
                             <Flex className="scrollableContent">
                                 <Flex.Item size="size.half">
@@ -546,6 +576,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                 <Button circular onClick={this.handleUploadClick}
                                                     size="small"
                                                     icon={<FilesUploadIcon />}
+                                                    // not content={this.localize("UploadImage")}
                                                     title={this.localize("UploadImage")}
                                                 />
                                             </Flex.Item>
@@ -557,10 +588,40 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             <TextArea
                                                 autoFocus
                                                 placeholder={this.localize("Summary")}
+                                                id="summary123"
                                                 value={this.state.summary}
                                                 onChange={this.onSummaryChanged}
                                                 fluid />
+                                            <SimpleMarkdownEditor
+                                                textAreaID="summary123"
+                                                styles={{fontFamily: 'Segoe UI'}}
+                                                enabledButtons={{strike:false, quote:false, h1:false, h2:false, h3:false, image:false}}
+                                            />
                                         </div>
+
+                                        {/* <div>
+                                            <p className='sum-label'>Summary</p>
+                                            <MdEditor
+                                                style={{margin: "20px auto",
+                                                width: "100%"}}
+                                                renderHTML={(text) => mdParser.render(text)}
+                                                onChange={({html, text})=> {    
+                                                    console.log( html, text)
+                                                    let showDefaultCard = (!this.state.title && !this.state.imageLink && !this.state.summary && !text && !this.state.btnTitle && !this.state.btnLink);   
+                                                    setCardSummary(this.card, text);
+                                                    this.setState({
+                                                        summary: text,
+                                                        card: this.card
+                                                    }, () => {
+                                                        if (showDefaultCard) {
+                                                            this.setDefaultCard(this.card);
+                                                        }
+                                                        this.updateCard();
+                                                    });
+                                                }}
+                                                onImageUpload={this.handleImageUpload}
+                                                />
+                                        </div> */}
 
                                         <Input className="inputField"
                                             value={this.state.author}
@@ -570,6 +631,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             autoComplete="off"
                                             fluid
                                         />
+
+                                        {/* lines 629-638 is in cristianoag only */}
                                         <div className="textArea">
                                             <Flex gap="gap.large" vAlign="end">
                                                 <Text size="small" align="start" content={this.localize("Buttons")} />
@@ -603,6 +666,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             else if (this.state.page === "AudienceSelection") {
                 return (
                     <div className="taskModule">
+                        {/* below Flex can also have styles={{ background: "white" }} */}
                         <Flex column className="formContainer" vAlign="stretch" gap="gap.small">
                             <Flex className="scrollableContent">
                                 <Flex.Item size="size.half">
@@ -927,7 +991,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         });
     }
 
-    // handler for the important message checkbox
+    // handler for the important message checkbox -- in cristianoag only
     private onImportantSelected = () => {
         this.setState({
             selectedImportant: !this.state.selectedImportant
@@ -1185,6 +1249,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         setCardSummary(this.card, this.state.summary);
         setCardAuthor(this.card, this.state.author);
         setCardBtns(this.card, this.state.values);
+        // setCardBtn(this.card, this.state.btnTitle, this.state.btnLink);
         this.setState({
             title: event.target.value,
             card: this.card
@@ -1214,6 +1279,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         setCardSummary(this.card, this.state.summary);
         setCardAuthor(this.card, this.state.author);
         setCardBtns(this.card, this.state.values);
+        // setCardBtn(this.card, this.state.btnTitle, this.state.btnLink);
         this.setState({
             imageLink: event.target.value,
             card: this.card
@@ -1232,6 +1298,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         setCardSummary(this.card, event.target.value);
         setCardAuthor(this.card, this.state.author);
         setCardBtns(this.card, this.state.values);
+        // setCardBtn(this.card, this.state.btnTitle, this.state.btnLink);
         this.setState({
             summary: event.target.value,
             card: this.card
@@ -1251,6 +1318,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         setCardSummary(this.card, this.state.summary);
         setCardAuthor(this.card, event.target.value);
         setCardBtns(this.card, this.state.values);
+        // setCardBtn(this.card, this.state.btnTitle, this.state.btnLink);
         this.setState({
             author: event.target.value,
             card: this.card
@@ -1262,7 +1330,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         });
     }
 
-    // private function to create the buttons UI
+    // private function to create the buttons UI -- in cristianoag only
     private createUI() {
         if (this.state.values.length > 0) {
             return this.state.values.map((el, i) =>
@@ -1300,7 +1368,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         }
     }
 
-    //private function to add a new button to the adaptive card
+    //private function to add a new button to the adaptive card -- in cristianoag only
     private addClick() {
         const item =
         {
@@ -1313,7 +1381,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         });
     }
 
-    //private function to remove a button from the adaptive card
+    //private function to remove a button from the adaptive card -- in cristianoag only
     private removeClick(i: any) {
         let values = [...this.state.values];
         values.splice(i, 1);
@@ -1346,7 +1414,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         };
     }
 
-    //private function to deal with changes in the button names
+    //private function to deal with changes in the button names -- in cristianoag only
     private handleChangeName(i: any, event: any) {
         let values = [...this.state.values];
         values[i].title = event.target.value;
@@ -1376,7 +1444,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         };
     }
 
-    //private function to deal with changes in the button links/urls
+    //private function to deal with changes in the button links/urls -- in cristianoag only
     private handleChangeLink(i: any, event: any) {
         let values = [...this.state.values];
         values[i].url = event.target.value;
