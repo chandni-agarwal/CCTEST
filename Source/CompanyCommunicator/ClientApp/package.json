@@ -26,6 +26,8 @@
     "react-image-file-resizer": "^0.3.8",
     "react-markdown": "^6.0.2",
     "react-markdown-editor-lite": "^1.2.4",
+    "react-simple-markdown-editor": "^1.1.0",
+    "lodash.merge":"^4.6.1",
     "react-redux": "^7.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",

@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 import * as React from 'react';
+import { PropTypes } from 'react';
+import {merge} from 'lodash';
 import {SimpleMarkdownEditor} from 'react-simple-markdown-editor';
 // import MarkdownIt from 'markdown-it';
 // import MdEditor from 'react-markdown-editor-lite';
@@ -585,6 +587,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
 
                                         <div className="textArea">
                                             <Text content={this.localize("Summary")} />
+                                            <SimpleMarkdownEditor
+                                                textAreaID="summary123"
+                                                enabledButtons={{strike:false, quote:false, h1:false, h2:false, h3:false, image:false}}
+                                            />
                                             <TextArea
                                                 autoFocus
                                                 placeholder={this.localize("Summary")}
@@ -592,10 +598,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                 value={this.state.summary}
                                                 onChange={this.onSummaryChanged}
                                                 fluid />
-                                            <SimpleMarkdownEditor
-                                                textAreaID="summary123"
-                                                enabledButtons={{strike:false, quote:false, h1:false, h2:false, h3:false, image:false}}
-                                            />
                                         </div>
 
                                         {/* <div>
