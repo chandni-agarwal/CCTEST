@@ -241,7 +241,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             var cardsize = JSON.stringify(this.card).length; // line in cristianoag only
             Resizer.imageFileResizer(file, 400, 400, 'JPEG', 80, 0,
                 uri => {
-                    if (uri.toString().length < 30720) {
+                    if (uri.toString().length < 32768) {
                         //everything is ok with the image, lets set it on the card and update
                         setCardImageLink(this.card, uri.toString());
                         this.updateCard();
@@ -251,7 +251,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                         }
                         );
                     } else {
-                        var errormsg = this.localize("ErrorImageTooBig") + " " + this.localize("ErrorImageTooBigSize") + " " + (30720 - cardsize) + " bytes.";
+                        var errormsg = this.localize("ErrorImageTooBig") + " " + this.localize("ErrorImageTooBigSize") + " " + (32768 - cardsize) + " bytes.";
                         //images bigger than 32K cannot be saved, set the error message to be presented
                         this.setState({
                             errorImageUrlMessage: errormsg
@@ -589,7 +589,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             <Text content={this.localize("Summary")} />
                                             <SimpleMarkdownEditor
                                                 textAreaID="summary123"
-                                                enabledButtons={{strike:false, quote:false, h1:false, h2:false, h3:false, image:false}}
+                                                styles={{button: { backgroundColor:'white', color:'#333536'}}}
+                                                enabledButtons={{strike:false, quote:false, h1:false, h2:false, h3:false, code:false, image:false}}
+                                                buttonHtmlText={{link:'&#8766;'}}
                                             />
                                             <TextArea
                                                 autoFocus
