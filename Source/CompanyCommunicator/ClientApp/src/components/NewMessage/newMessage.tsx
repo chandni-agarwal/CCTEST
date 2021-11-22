@@ -589,7 +589,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                             <Text content={this.localize("Summary")} />
                                             <SimpleMarkdownEditor
                                                 textAreaID="summary123"
-                                                styles={{button: { backgroundColor:'white', color:'#333536'}}}
+                                                styles={{button: {backgroundColor:'white', color:'#333536', border:'1px #4e55ad'}}}
                                                 enabledButtons={{strike:false, quote:false, h1:false, h2:false, h3:false, code:false, image:false}}
                                                 buttonHtmlText={{link:'&#8766;'}}
                                             />
