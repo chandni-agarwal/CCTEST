@@ -594,7 +594,6 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                                                 fluid />
                                             <SimpleMarkdownEditor
                                                 textAreaID="summary123"
-                                                styles={{fontFamily: 'Segoe UI'}}
                                                 enabledButtons={{strike:false, quote:false, h1:false, h2:false, h3:false, image:false}}
                                             />
                                         </div>
